@@ -6,12 +6,12 @@ class Router
 {
     private array $routes = [];
 
-    public function get(string $path, callable $handler): void
+    public function get(string $path, string|callable $handler): void
     {
         $this->routes['GET'][$path] = $handler;
     }
 
-    public function post(string $path, callable $handler): void
+    public function post(string $path, string|callable $handler): void
     {
         $this->routes['POST'][$path] = $handler;
     }
@@ -19,16 +19,26 @@ class Router
     public function dispatch(): void
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $uri    = rtrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/') ?: '/';
 
-        $handler = $this->routes[$method][$uri] ?? null;
+        foreach ($this->routes[$method] ?? [] as $path => $handler) {
+            $pattern = '#^' . preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $path) . '$#';
 
-        if ($handler === null) {
-            http_response_code(404);
-            echo '404 Not Found';
+            if (!preg_match($pattern, $uri, $matches)) {
+                continue;
+            }
+
+            $params = array_values(array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY));
+
+            if (is_string($handler) && class_exists($handler)) {
+                $handler = new $handler();
+            }
+
+            echo call_user_func_array($handler, $params);
             return;
         }
 
-        call_user_func($handler);
+        http_response_code(404);
+        echo '404 Not Found';
     }
 }
