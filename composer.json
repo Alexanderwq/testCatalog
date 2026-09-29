@@ -10,5 +10,7 @@
             "name": "Alexander"
         }
     ],
-    "require": {}
+    "require": {
+        "smarty/smarty": "^5.8"
+    }
 }
