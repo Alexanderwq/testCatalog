@@ -1,0 +1,14 @@
+{
+    "name": "alexander/test-catalog",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexander"
+        }
+    ],
+    "require": {}
+}
