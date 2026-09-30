@@ -134,6 +134,7 @@ readonly class ArticleRepository
             SELECT id, name, description, views_count, content, created_at
             FROM articles
             WHERE id IN ($placeholders)
+            ORDER BY created_at DESC
         ";
 
         $stmt = $this->dbClient->prepare($query);

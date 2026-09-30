@@ -22,6 +22,9 @@
                     <p>
                         {$article->description}
                     </p>
+                    <p>
+                        Дата создания: {$article->createdAt->format('d.m.Y H:i')}
+                    </p>
                 </div>
             {/foreach}
         {/if}
