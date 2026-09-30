@@ -48,4 +48,27 @@ readonly class CategoryRepository
 
         return $result;
     }
+
+    /**
+     * @return CategoryDto[]
+     */
+    public function getCategoriesWithArticles(): array
+    {
+        $query = "
+            SELECT c.id, c.name, c.description FROM article_categories ac
+            JOIN categories c ON ac.category_id = c.id
+            GROUP BY ac.category_id
+        ";
+
+        $stmt = $this->dbClient->prepare($query);
+        $stmt->execute();
+
+        $result = $stmt->fetchAll();
+
+        return array_map(fn(array $category) => new CategoryDto(
+            $category['id'],
+            $category['name'],
+            $category['description'],
+        ), $result);
+    }
 }

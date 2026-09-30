@@ -2,40 +2,46 @@
 
 namespace App\Controller;
 
+use App\Repository\ArticleCategoriesRepository\ArticleCategoriesRepository;
+use App\Repository\ArticleRepository\ArticleDto;
+use App\Repository\ArticleRepository\ArticleRepository;
+use App\Repository\CategoryRepository\CategoryRepository;
 use App\Template;
-use PDO;
 
 readonly class MainController
 {
-    public function __construct(private PDO $dbClient, private Template $template)
-    {
+    public function __construct(
+        private ArticleCategoriesRepository $articleCategoriesRepository,
+        private CategoryRepository $categoryRepository,
+        private ArticleRepository $articleRepository,
+        private Template $template,
+    ) {
     }
 
     public function __invoke(): string
     {
-        $stat = $this->dbClient->query("
-            SELECT DISTINCT id from categories
-            JOIN article_categories ON article_categories.category_id = categories.id
-        ");
+        $categories = $this->categoryRepository->getCategoriesWithArticles();
+        $articlesMap = $this->articleCategoriesRepository->getLastArticlesByCategories($categories);
+        $articlesIds = array_merge(...array_values($articlesMap));
+        $articles = $this->articleRepository->getArticles($articlesIds);
 
-        $result = $stat->fetchAll(PDO::FETCH_COLUMN);
+        $articlesByCategory = [];
 
-        return $this->template->render('home.tpl', [
-            'categories' => [
-                [
-                    "name" => "my category",
-                    "slug" => "my_category",
-                    "posts" => [
-                        [
-                            "title" => "my title",
-                            "description" => "my description",
-                            "slug" => "my_slug",
-                            "author" => "my author",
-                            "created_at" => "2025.04.04"
-                        ]
-                    ]
-                ]
-            ],
+        foreach ($categories as $category) {
+            $categoryArticleIds = $articlesMap[$category->id];
+            $articlesByCategory[$category->id] = array_filter(
+                $articles,
+                fn(ArticleDto $article) => in_array(
+                    $article->id,
+                    $categoryArticleIds,
+                    true
+                )
+            );
+        }
+
+        return $this->template->render('pages/home.tpl', [
+            'articlesByCategory' => $articlesByCategory,
+            'categories' => $categories,
         ]);
     }
 }
