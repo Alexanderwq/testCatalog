@@ -1,4 +1,7 @@
 .env
 /vendor/
 /var/compile/*
-/public/css/*.css
+/node_modules
+/public/css/*
+!/public/css/.gitkeep
+.idea
