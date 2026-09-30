@@ -1,0 +1,15 @@
+{
+  "name": "testcatalog",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "sass assets/scss:public/css --style=compressed",
+    "watch": "sass --watch assets/scss:public/css"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "sass": "^1.105.1"
+  }
+}

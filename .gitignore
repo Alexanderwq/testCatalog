@@ -1,3 +1,4 @@
 .env
 /vendor/
 /var/compile/*
+/public/css/*.css

@@ -41,5 +41,16 @@ services:
       timeout: 5s
       retries: 10
 
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: npm run watch
+
 volumes:
+  node_modules:
   db_data:
