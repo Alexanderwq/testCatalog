@@ -69,4 +69,88 @@ readonly class ArticleRepository
             $stmt->fetchAll(PDO::FETCH_ASSOC)
         );
     }
+
+    /**
+     * @throws Exception
+     */
+    public function getArticleById(int $articleId): ArticleDto
+    {
+        $query = "SELECT id, name, description, views_count, content, created_at FROM articles WHERE id = :articleId";
+
+        $stmt = $this->dbClient->prepare($query);
+        $stmt->execute([':articleId' => $articleId]);
+
+        $articleRaw = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($articleRaw === false) {
+            throw new Exception("Not found article");
+        }
+
+        return new ArticleDto(
+            $articleRaw['id'],
+            $articleRaw['name'],
+            $articleRaw['description'],
+            $articleRaw['content'],
+            new DateTimeImmutable($articleRaw['created_at']),
+            $articleRaw['views_count'],
+        );
+    }
+
+    /**
+     * @param int $categoryId
+     * @param int $articleId
+     * @return int[]
+     */
+    public function getRecommendedArticlesByCategory(int $categoryId, int $articleId): array
+    {
+        $query = "
+            SELECT article_id FROM article_categories 
+            WHERE category_id = :categoryId and article_id != :articleId
+            ORDER BY RAND()
+            LIMIT 3
+        ";
+
+        $stmt = $this->dbClient->prepare($query);
+        $stmt->execute([':categoryId' => $categoryId, ':articleId' => $articleId]);
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * @param int[] $ids
+     * @return ArticleDto[]
+     * @throws Exception
+     */
+    public function getArticles(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $query = "
+            SELECT id, name, description, views_count, content, created_at
+            FROM articles
+            WHERE id IN ($placeholders)
+        ";
+
+        $stmt = $this->dbClient->prepare($query);
+        $stmt->execute($ids);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(
+            fn(array $row) => new ArticleDto(
+                (int) $row['id'],
+                $row['name'],
+                $row['description'],
+                $row['content'],
+                new DateTimeImmutable($row['created_at']),
+                (int) $row['views_count']
+            ),
+            $rows
+        );
+    }
 }

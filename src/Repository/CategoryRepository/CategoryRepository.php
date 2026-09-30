@@ -27,4 +27,25 @@ readonly class CategoryRepository
 
         return new CategoryDto($category['id'], $category['name'], $category['description']);
     }
+
+    public function getRandomCategory(int $articleId): int
+    {
+        $query = "
+            SELECT article_categories.category_id from article_categories
+            where article_id = :articleId
+            order by rand()
+            limit 1;
+        ";
+
+        $stmt = $this->dbClient->prepare($query);
+        $stmt->execute([':articleId' => $articleId]);
+
+        $result = $stmt->fetchColumn();
+
+        if ($result === false) {
+            throw new Exception("Not found category");
+        }
+
+        return $result;
+    }
 }

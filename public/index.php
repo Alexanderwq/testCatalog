@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use App\Controller\ArticleController;
 use App\Controller\CategoryController;
 use App\Controller\MainController;
 use App\Database;
@@ -25,6 +26,12 @@ $router->get('/category/{category_id}', new CategoryController(
     $template,
     $categoryRepository,
     $articlesRepository,
+));
+
+$router->get('/article/{article_id}', new ArticleController(
+    $template,
+    $articlesRepository,
+    $categoryRepository,
 ));
 
 $router->dispatch();
