@@ -1,6 +1,6 @@
-{*{extends file="layouts/base.tpl"}*}
+{extends file="base.tpl"}
 
-{*{block name="content"}*}
+{block name="content"}
     <header class="category-header">
         <h1>{$category->name}</h1>
         {if $category->description}
@@ -60,4 +60,4 @@
             {/if}
         </nav>
     {/if}
-{*{/block}*}
+{/block}

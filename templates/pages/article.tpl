@@ -1,3 +1,7 @@
+{extends file="base.tpl"}
+
+{block name="content"}
+
 <article>
     <h1>{$article->name|escape}</h1>
 
@@ -30,3 +34,5 @@
         </div>
     </section>
 {/if}
+
+{/block}
