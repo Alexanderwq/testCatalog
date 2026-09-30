@@ -10,7 +10,15 @@
 
     {foreach $categories as $category}
         <h2>{$category->name}</h2>
+
         <p>{$category->description}</p>
+
+        <p>
+            <a href="/category/{$category->id}">
+                Все статьи
+            </a>
+        </p>
+
         {if isset($articlesByCategory[$category->id])}
             {foreach $articlesByCategory[$category->id] as $article}
                 <div>
