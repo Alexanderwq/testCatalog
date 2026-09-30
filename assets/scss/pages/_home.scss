@@ -1,0 +1,25 @@
+.site-main {
+  .container {
+    gap: 30px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .category {
+    &__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &__description {
+      margin-bottom: 20px;
+    }
+  }
+}

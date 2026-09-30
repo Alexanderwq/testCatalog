@@ -1,0 +1,81 @@
+@use "variables" as *;
+@use "mixins" as *;
+@use "../components/header";
+@use "../components/footer";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: $font-text;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: $color-text;
+  background: $color-bg;
+}
+
+a {
+  color: $color-accent;
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    color: $color-accent-dk;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+h1,
+h2,
+h3 {
+  font-family: $font-heading;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: $container-width;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  @include up($bp-tablet) {
+    padding-inline: 2rem;
+  }
+}
+
+.site-main {
+  padding-block: 2.5rem 4rem;
+
+  @include up($bp-tablet) {
+    padding-block: 4rem 6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

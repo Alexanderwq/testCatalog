@@ -1,38 +1,61 @@
 {extends file="base.tpl"}
 
+{block name="styles"}
+    <link rel="stylesheet" href="/css/article.css">
+{/block}
+
 {block name="content"}
+    <article class="article-page">
 
-<article>
-    <h1>{$article->name|escape}</h1>
+        <header class="article-page__header">
+            <h1 class="article-page__title">
+                {$article->name|escape}
+            </h1>
 
-    <p class="meta">
-        ID статьи: {$article->id}<br>
-        Дата создания: {$article->createdAt->format('d.m.Y H:i')}
-        ({$article->createdAt->getTimezone()->getName()})<br>
-        Просмотров: {$article->viewsCount|number_format:0:',':' '}
-    </p>
+            <div class="article-page__meta">
+                <span class="article-page__meta-item">
+                    ID статьи: {$article->id}
+                </span>
 
-    <section class="content">
-        <h2>Кратко</h2>
-        <p>{$article->content|escape|nl2br}</p>
-    </section>
+                <span class="article-page__meta-item">
+                    Дата создания:
+                    {$article->createdAt->format('d.m.Y H:i')}
+                    ({$article->createdAt->getTimezone()->getName()})
+                </span>
 
-    <section class="description">
-        <h2>Описание</h2>
-        <p>{$article->description|escape|nl2br}</p>
-    </section>
-</article>
+                <span class="article-page__meta-item">
+                    Просмотров:
+                    {$article->viewsCount|number_format:0:',':' '}
+                </span>
+            </div>
+        </header>
 
-{if !empty($recommendedArticles)}
-    <section class="recommended">
-        <h2>Рекомендуем почитать</h2>
+        <section class="article-page__section">
+            <h2>Кратко</h2>
 
-        <div class="recommended-list">
-            {foreach $recommendedArticles as $recommended}
-                {include file='components/article_card.tpl' item=$recommended}
-            {/foreach}
-        </div>
-    </section>
-{/if}
+            <p>
+                {$article->content|escape|nl2br}
+            </p>
+        </section>
 
+        <section class="article-page__section">
+            <h2>Описание</h2>
+
+            <p>
+                {$article->description|escape|nl2br}
+            </p>
+        </section>
+
+    </article>
+    {if !empty($recommendedArticles)}
+        <section class="article-page__recommended">
+            <h2>Рекомендуем почитать</h2>
+
+            <div class="article-page__recommended-list">
+                {foreach $recommendedArticles as $recommended}
+                    {include file='components/article_card.tpl' item=$recommended}
+                {/foreach}
+            </div>
+        </section>
+    {/if}
 {/block}

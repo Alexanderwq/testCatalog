@@ -1,5 +1,9 @@
 {extends file="base.tpl"}
 
+{block name="styles"}
+    <link rel="stylesheet" href="/css/category.css">
+{/block}
+
 {block name="content"}
     <header class="category-header">
         <h1>{$category->name}</h1>

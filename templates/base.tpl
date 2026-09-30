@@ -8,6 +8,8 @@
 
     <meta name="description"
           content="{block name="description"}Блог со статьями, рецептами, путешествиями и полезными материалами.{/block}">
+
+    {block name="styles"}{/block}
 </head>
 
 <body>
