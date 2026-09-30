@@ -41,23 +41,23 @@
         <p>В этой категории пока нет статей.</p>
     {/foreach}
 
-{*    {if $pages > 1}*}
-{*        <nav class="pagination" aria-label="Страницы">*}
-{*            {if $page > 1}*}
-{*                <a href="/category/{$category.id}?sort={$sort}&amp;page={$page - 1}" rel="prev">&laquo; Назад</a>*}
-{*            {/if}*}
+    {if $pages > 1}
+        <nav class="pagination" aria-label="Страницы">
+            {if $page > 1}
+                <a href="/category/{$category->id}?{if $sort}sort={$sort}&amp;{/if}page={$page - 1}" rel="prev">&laquo;</a>
+            {/if}
 
-{*            {for $i=1 to $pages}*}
-{*                {if $i == $page}*}
-{*                    <span class="current" aria-current="page">{$i}</span>*}
-{*                {else}*}
-{*                    <a href="/category/{$category.id}?sort={$sort}&amp;page={$i}">{$i}</a>*}
-{*                {/if}*}
-{*            {/for}*}
+            {for $i=$from to $to}
+                {if $i == $page}
+                    <span class="current" aria-current="page">{$i}</span>
+                {else}
+                    <a href="/category/{$category->id}?{if $sort}sort={$sort}&amp;{/if}page={$i}">{$i}</a>
+                {/if}
+            {/for}
 
-{*            {if $page < $pages}*}
-{*                <a href="/category/{$category.id}?sort={$sort}&amp;page={$page + 1}" rel="next">Вперёд &raquo;</a>*}
-{*            {/if}*}
-{*        </nav>*}
-{*    {/if}*}
+            {if $page < $pages}
+                <a href="/category/{$category->id}?{if $sort}sort={$sort}&amp;{/if}page={$page + 1}" rel="next">&raquo;</a>
+            {/if}
+        </nav>
+    {/if}
 {*{/block}*}
