@@ -30,7 +30,7 @@ readonly class CategoryController
         $pages = (int) ceil($total / ArticleRepository::PER_PAGE);
         $paginationData = $this->pagination->handle($pages, $page);
 
-        if ($categoryId === false || $categoryId < 1 || $page > $pages || $page < 1) {
+        if ($this->categoryIsInvalid($categoryId) || $this->pageIsInvalid($pages, $page)) {
             return $this->template->render('pages/404.tpl');
         }
 
@@ -48,5 +48,15 @@ readonly class CategoryController
             'sort' => $sort,
             ...$paginationData,
         ]);
+    }
+
+    private function categoryIsInvalid(string|bool $categoryId): bool
+    {
+        return $categoryId === false || $categoryId < 1;
+    }
+
+    private function pageIsInvalid(int $pages, int $page): bool
+    {
+        return $page > $pages || $page < 1;
     }
 }
