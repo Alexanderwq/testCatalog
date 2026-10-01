@@ -24,16 +24,7 @@
             {if !empty($articlesByCategory[$category->id])}
                 <div class="article-list">
                     {foreach $articlesByCategory[$category->id] as $article}
-                        <article class="article-card">
-                            <h3 class="article-card__title">
-                                <a href="/article/{$article->id}">{$article->name|escape}</a>
-                            </h3>
-                            <p class="article-card__text">{$article->description|escape}</p>
-                            <time class="article-card__date"
-                                  datetime="{$article->createdAt->format('c')}">
-                                {$article->createdAt->format('d.m.Y H:i')}
-                            </time>
-                        </article>
+                        {include file='components/article_card.tpl' item=$article}
                     {/foreach}
                 </div>
             {/if}

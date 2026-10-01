@@ -30,6 +30,14 @@
             </div>
         </header>
 
+        <figure class="article-page__figure">
+            <img class="article-page__image"
+                 src="/images/{$article->image|escape}"
+                 alt="{$article->name|escape}"
+                 width="1200" height="630"
+                 decoding="async">
+        </figure>
+
         <section class="article-page__section">
             <h2>Кратко</h2>
 

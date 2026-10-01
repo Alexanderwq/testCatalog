@@ -28,22 +28,13 @@
         </a>
     </nav>
 
-    {foreach $articles as $article}
-        <article class="article-card">
-            <h2>
-                <a href="/article/{$article->id}">{$article->name}</a>
-            </h2>
-            <p>{$article->description}</p>
-            <footer>
-                <time datetime="{$article->createdAt->format('c')}">
-                    {$article->createdAt->format('d.m.Y')}
-                </time>
-                <span>Просмотров: {$article->viewsCount}</span>
-            </footer>
-        </article>
-        {foreachelse}
-        <p>В этой категории пока нет статей.</p>
-    {/foreach}
+    <div class="article-list">
+        {foreach $articles as $article}
+            {include file='components/article_card.tpl' item=$article}
+            {foreachelse}
+            <p>В этой категории пока нет статей.</p>
+        {/foreach}
+    </div>
 
     {if $pages > 1}
         <nav class="pagination" aria-label="Страницы">
