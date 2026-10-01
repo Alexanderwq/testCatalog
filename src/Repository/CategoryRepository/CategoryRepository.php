@@ -55,9 +55,10 @@ readonly class CategoryRepository
     public function getCategoriesWithArticles(): array
     {
         $query = "
-            SELECT c.id, c.name, c.description FROM categories c
-            WHERE c.id IN (
-                SELECT category_id FROM article_categories group by category_id
+            SELECT c.id, c.name, c.description
+            FROM categories c
+            WHERE EXISTS (
+                SELECT 1 FROM article_categories ac WHERE ac.category_id = c.id
             )
         ";
 
