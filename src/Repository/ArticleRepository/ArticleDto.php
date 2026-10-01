@@ -11,6 +11,7 @@ class ArticleDto
         public string $name,
         public string $content,
         public string $description,
+        public string $image,
         public DateTimeImmutable $createdAt,
         public int $viewsCount,
     ) {

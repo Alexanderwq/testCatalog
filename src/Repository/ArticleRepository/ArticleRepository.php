@@ -34,7 +34,7 @@ readonly class ArticleRepository
     public function getArticlesByCategory(int $categoryId, ?string $sort, int $page): array
     {
         $query = "
-            SELECT a.id, a.name, a.description, a.content, a.created_at, a.views_count as viewsCount, ac.category_id, a.id
+            SELECT a.id, a.name, a.description, a.content, a.created_at, a.image, a.views_count as viewsCount, ac.category_id, a.id
             FROM articles a
             JOIN article_categories ac ON a.id = ac.article_id and ac.category_id = :categoryId
         ";
@@ -59,12 +59,13 @@ readonly class ArticleRepository
 
         return array_map(
             fn(array $row) => new ArticleDto(
-                $row['id'],
-                $row['name'],
-                $row['description'],
-                $row['content'],
-                new DateTimeImmutable($row['created_at']),
-                $row['viewsCount']
+                id: $row['id'],
+                name: $row['name'],
+                content: $row['content'],
+                description: $row['description'],
+                image: $row['image'],
+                createdAt: new DateTimeImmutable($row['created_at']),
+                viewsCount: $row['viewsCount']
             ),
             $stmt->fetchAll(PDO::FETCH_ASSOC)
         );
@@ -75,7 +76,7 @@ readonly class ArticleRepository
      */
     public function getArticleById(int $articleId): ArticleDto
     {
-        $query = "SELECT id, name, description, views_count, content, created_at FROM articles WHERE id = :articleId";
+        $query = "SELECT id, name, description, views_count, content, image, created_at FROM articles WHERE id = :articleId";
 
         $stmt = $this->dbClient->prepare($query);
         $stmt->execute([':articleId' => $articleId]);
@@ -87,12 +88,13 @@ readonly class ArticleRepository
         }
 
         return new ArticleDto(
-            $articleRaw['id'],
-            $articleRaw['name'],
-            $articleRaw['description'],
-            $articleRaw['content'],
-            new DateTimeImmutable($articleRaw['created_at']),
-            $articleRaw['views_count'],
+            id: $articleRaw['id'],
+            name: $articleRaw['name'],
+            content: $articleRaw['content'],
+            description: $articleRaw['description'],
+            image: $articleRaw['image'],
+            createdAt: new DateTimeImmutable($articleRaw['created_at']),
+            viewsCount: $articleRaw['views_count'],
         );
     }
 
@@ -131,7 +133,7 @@ readonly class ArticleRepository
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
         $query = "
-            SELECT id, name, description, views_count, content, created_at
+            SELECT id, name, description, views_count, content, image, created_at
             FROM articles
             WHERE id IN ($placeholders)
             ORDER BY created_at DESC
@@ -144,12 +146,13 @@ readonly class ArticleRepository
 
         return array_map(
             fn(array $row) => new ArticleDto(
-                (int) $row['id'],
-                $row['name'],
-                $row['description'],
-                $row['content'],
-                new DateTimeImmutable($row['created_at']),
-                (int) $row['views_count']
+                id: (int) $row['id'],
+                name: $row['name'],
+                content: $row['content'],
+                description: $row['description'],
+                image: $row['image'],
+                createdAt: new DateTimeImmutable($row['created_at']),
+                viewsCount: (int) $row['views_count']
             ),
             $rows
         );
