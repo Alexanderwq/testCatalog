@@ -49,7 +49,6 @@ readonly class SeederService
                     created_at  TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
                     updated_at  TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     INDEX idx_articles_created_at (created_at),
-                    INDEX idx_articles_name (name),
                     INDEX idx_articles_views (views_count)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             ",
