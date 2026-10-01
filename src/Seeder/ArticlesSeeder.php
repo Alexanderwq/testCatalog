@@ -4,6 +4,8 @@ namespace App\Seeder;
 
 use DateTimeImmutable;
 use PDO;
+use Random\RandomException;
+use Throwable;
 
 class ArticlesSeeder
 {
@@ -82,45 +84,66 @@ class ArticlesSeeder
         ],
     ];
 
-    private const ARTICLES_COUNT = 1000;
+    private const ARTICLES_COUNT = 250000;
+
+    private const BATCH_SIZE = 2000;
 
     public function __construct(private readonly PDO $dbClient)
     {
     }
 
+    /**
+     * @throws Throwable
+     * @throws RandomException
+     */
     public function run(): void
     {
-        $query = $this->dbClient->prepare("
-            INSERT INTO articles (image, name, description, content, views_count, created_at)
-            VALUES (:image, :name, :description, :content, :views, :created_at)
-        ");
+        $columns = ['image', 'name', 'description', 'content', 'views_count', 'created_at'];
+        $rowPlaceholder = '(' . implode(',', array_fill(0, count($columns), '?')) . ')';
 
-        $current = 0;
+        $countRows = 0;
 
-        while ($current < self::ARTICLES_COUNT) {
-            $article = $this->generateArticleData();
+        try {
+            while ($countRows !== self::ARTICLES_COUNT) {
+                $size = min(self::BATCH_SIZE, self::ARTICLES_COUNT - $countRows);
 
-            $query->execute([
-                ':image' => $article['image'],
-                ':name' => $article['name'],
-                ':description' => $article['description'],
-                ':content' => $article['content'],
-                ':views' => $article['views_count'],
-                ':created_at' => $article['created_at'],
-            ]);
+                $values = [];
 
-            $current++;
+                for ($i = 0; $i < $size; $i++) {
+                    $article = $this->generateArticleData();
+
+                    $values[] = $article['image'];
+                    $values[] = $article['name'];
+                    $values[] = $article['description'];
+                    $values[] = $article['content'];
+                    $values[] = $article['views_count'];
+                    $values[] = $article['created_at'];
+                }
+
+                $sql = 'INSERT INTO articles (' . implode(',', $columns) . ') VALUES '
+                    . implode(',', array_fill(0, $size, $rowPlaceholder));
+
+                $this->dbClient->prepare($sql)->execute($values);
+
+                $countRows += $size;
+            }
+        } catch (Throwable $exception) {
+            echo $exception->getMessage();
+            throw $exception;
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     private function generateArticleData(): array
     {
         $end = new DateTimeImmutable();
         $start = $end->modify('-3 months');
 
         $randomCreatedAt = random_int($start->getTimestamp(), $end->getTimestamp());
-
         $randomArticle = self::ARTICLES[array_rand(self::ARTICLES)];
+
         return [
             ...$randomArticle,
             'created_at' => (new DateTimeImmutable())->setTimestamp($randomCreatedAt)->format('Y-m-d H:i:s'),
