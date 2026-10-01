@@ -18,9 +18,10 @@ make init
 ```bash
    docker compose up -d
 ```
-3. Поднять контейнеры:
+3. Создать .env из .env.example и установить composer зависимости:
 ```bash
-   скопировать .env.example в .env
+   docker compose exec php-fpm composer install
+   cp .env.example в .env
 ```
 4. Заполнить базу и дождаться завершения:
 ```bash
