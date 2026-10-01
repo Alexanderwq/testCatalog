@@ -1,5 +1,4 @@
 @use "variables" as *;
-@use "mixins" as *;
 @use "../components/header";
 @use "../components/footer";
 
@@ -59,18 +58,10 @@ p {
   display: flex;
   flex-direction: column;
   gap: 30px;
-
-  @include up($bp-tablet) {
-    padding-inline: 2rem;
-  }
 }
 
 .site-main {
   padding-block: 2.5rem 4rem;
-
-  @include up($bp-tablet) {
-    padding-block: 4rem 6rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
