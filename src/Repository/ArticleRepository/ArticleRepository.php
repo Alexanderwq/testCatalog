@@ -171,11 +171,10 @@ readonly class ArticleRepository
         foreach ($categories as $category) {
             $id = $category->id;
             $parts[] = "(
-                SELECT a.id, a.name, a.views_count, a.image, a.content, a.description, a.created_at, ac.category_id 
-                FROM article_categories ac
-                JOIN articles a on a.id = ac.article_id
-                WHERE ac.category_id = $id
-                ORDER BY a.created_at DESC, a.id DESC
+                SELECT a.id, a.name, a.views_count, a.image, a.content, a.description, a.created_at, ac.category_id
+                FROM articles a FORCE INDEX (idx_articles_created_at)
+                JOIN article_categories ac ON ac.article_id = a.id AND ac.category_id = $id
+                ORDER BY a.created_at DESC
                 LIMIT $limit)";
         }
 
