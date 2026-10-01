@@ -1,5 +1,7 @@
 ## Запуск проекта
 
+## http://localhost:8080/
+
 ### Через Makefile
 
 ```bash
@@ -16,7 +18,11 @@ make init
 ```bash
    docker compose up -d
 ```
-3. Заполнить базу и дождаться завершения:
+3. Поднять контейнеры:
+```bash
+   скопировать .env.example в .env
+```
+4. Заполнить базу и дождаться завершения:
 ```bash
    docker compose exec php-fpm php database/seed.php
 ```
