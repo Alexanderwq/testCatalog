@@ -2,6 +2,7 @@
 
 namespace App\Repository\ArticleRepository;
 
+use App\Repository\CategoryRepository\CategoryDto;
 use DateTimeImmutable;
 use Exception;
 use PDO;
@@ -156,5 +157,46 @@ readonly class ArticleRepository
             ),
             $rows
         );
+    }
+
+    /**
+     * @param CategoryDto[] $categories
+     * @param int $limit
+     * @return array
+     * @throws Exception
+     */
+    public function getLastArticlesByCategories(array $categories, int $limit = 3): array
+    {
+        $parts = [];
+        foreach ($categories as $category) {
+            $id = $category->id;
+            $parts[] = "(
+                SELECT a.id, a.name, a.views_count, a.image, a.content, a.description, a.created_at, ac.category_id 
+                FROM article_categories ac
+                JOIN articles a on a.id = ac.article_id
+                WHERE ac.category_id = $id
+                ORDER BY a.created_at DESC, a.id DESC
+                LIMIT $limit)";
+        }
+
+        $sql = implode(' UNION ALL ', $parts) . ' ORDER BY category_id, created_at DESC';
+
+        $stmt = $this->dbClient->prepare($sql);
+        $stmt->execute();
+
+        $result = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $result[(int) $row['category_id']][] = new ArticleDto(
+                id: $row['id'],
+                name: $row['name'],
+                content: $row['content'],
+                description: $row['description'],
+                image: $row['image'],
+                createdAt: new DateTimeImmutable($row['created_at']),
+                viewsCount: $row['views_count'],
+            );
+        }
+
+        return $result;
     }
 }

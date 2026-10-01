@@ -6,7 +6,6 @@ use App\Controller\ArticleController;
 use App\Controller\CategoryController;
 use App\Controller\MainController;
 use App\Database;
-use App\Repository\ArticleCategoriesRepository\ArticleCategoriesRepository;
 use App\Repository\ArticleRepository\ArticleRepository;
 use App\Repository\CategoryRepository\CategoryRepository;
 use App\Router;
@@ -20,10 +19,8 @@ $connection = $database->getConnection();
 
 $categoryRepository = new CategoryRepository($connection);
 $articlesRepository = new ArticleRepository($connection);
-$articleCategoriesRepository = new ArticleCategoriesRepository($connection);
 
 $router->get('/', new MainController(
-    $articleCategoriesRepository,
     $categoryRepository,
     $articlesRepository,
     $template,
