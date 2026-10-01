@@ -25,7 +25,6 @@ readonly class ArticleController
 
         $categoryId = $this->categoryRepository->getRandomCategoryByArticle($articleId);
         $recommendedArticleIds = $this->articleRepository->getRecommendedArticlesByCategory($categoryId, $articleId);
-
         $recommendedArticles = $this->articleRepository->getArticles($recommendedArticleIds);
 
         return $this->template->render('pages/article.tpl', [
