@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\ArticleRepository\ArticleRepository;
 use App\Repository\CategoryRepository\CategoryRepository;
 use App\Template;
+use Exception;
 
 readonly class ArticleController
 {
@@ -15,6 +16,9 @@ readonly class ArticleController
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(int $articleId): string
     {
         $article = $this->articleRepository->getArticleById($articleId);
