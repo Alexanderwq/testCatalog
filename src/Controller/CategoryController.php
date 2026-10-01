@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\ArticleRepository\ArticleRepository;
 use App\Repository\CategoryRepository\CategoryRepository;
+use App\Request\CategoryRequest;
 use App\Service\Pagination;
 use App\Template;
 use Exception;
@@ -13,50 +14,53 @@ readonly class CategoryController
     private Pagination $pagination;
 
     public function __construct(
-        private Template $template,
+        private Template           $template,
         private CategoryRepository $categoryRepository,
         private ArticleRepository  $articleRepository,
-    ) {
+    )
+    {
         $this->pagination = new Pagination();
     }
 
+    /**
+     * @throws Exception
+     */
     public function __invoke(string $categoryId): string
     {
-        $categoryId = filter_var($categoryId, FILTER_VALIDATE_INT);
-        $sort = $_GET['sort'] ?? null;
-        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $request = CategoryRequest::from(
+            $categoryId,
+            $_GET['sort'] ?? '',
+            $_GET['page'] ?? 1,
+        );
 
         $total = $this->articleRepository->countByCategory($categoryId);
-        $pages = (int) ceil($total / ArticleRepository::PER_PAGE);
-        $paginationData = $this->pagination->handle($pages, $page);
-
-        if ($this->categoryIsInvalid($categoryId) || $this->pageIsInvalid($pages, $page)) {
-            return $this->template->render('pages/404.tpl');
-        }
+        $paginationData = $this->pagination->handle($total, $request->page);
 
         try {
             $category = $this->categoryRepository->getCategoryById($categoryId);
         } catch (Exception $exception) {
-            return $this->template->render('pages/404.tpl');
+            return $this->notFoundPage();
         }
 
-        $articles = $this->articleRepository->getArticlesByCategory($categoryId, $sort, $page);
+        $articles = $this->articleRepository->getArticlesByCategory(
+            $request->categoryId,
+            $request->sort,
+            $request->page,
+        );
 
         return $this->template->render('pages/category.tpl', [
             'category' => $category,
             'articles' => $articles,
-            'sort' => $sort,
-            ...$paginationData,
+            'sort' => $request->sort,
+            'from' => $paginationData['from'],
+            'to' => $paginationData['to'],
+            'page' => $request->page,
+            'pages' => $paginationData['pages'],
         ]);
     }
 
-    private function categoryIsInvalid(string|bool $categoryId): bool
+    private function notFoundPage(): string
     {
-        return $categoryId === false || $categoryId < 1;
-    }
-
-    private function pageIsInvalid(int $pages, int $page): bool
-    {
-        return $page > $pages || $page < 1;
+        return $this->template->render('pages/404.tpl');
     }
 }
