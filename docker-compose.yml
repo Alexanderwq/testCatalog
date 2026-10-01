@@ -19,6 +19,7 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     depends_on:
       db:
         condition: service_healthy
