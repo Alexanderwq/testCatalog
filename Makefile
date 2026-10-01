@@ -4,7 +4,7 @@
 init: .env
 	docker compose build
 	docker compose up -d --wait
-
+	docker compose exec php-fpm composer install
 	docker compose exec php-fpm php database/seed.php
 
 up:
