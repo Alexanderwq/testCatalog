@@ -19,7 +19,7 @@ readonly class ArticleController
     {
         $article = $this->articleRepository->getArticleById($articleId);
 
-        $categoryId = $this->categoryRepository->getRandomCategory($articleId);
+        $categoryId = $this->categoryRepository->getRandomCategoryByArticle($articleId);
         $recommendedArticleIds = $this->articleRepository->getRecommendedArticlesByCategory($categoryId, $articleId);
 
         $recommendedArticles = $this->articleRepository->getArticles($recommendedArticleIds);

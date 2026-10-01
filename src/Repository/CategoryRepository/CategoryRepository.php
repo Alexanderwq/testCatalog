@@ -28,7 +28,7 @@ readonly class CategoryRepository
         return new CategoryDto($category['id'], $category['name'], $category['description']);
     }
 
-    public function getRandomCategory(int $articleId): int
+    public function getRandomCategoryByArticle(int $articleId): int
     {
         $query = "
             SELECT article_categories.category_id from article_categories
